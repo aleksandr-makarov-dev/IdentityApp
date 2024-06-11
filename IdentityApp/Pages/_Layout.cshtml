@@ -1,0 +1,23 @@
+﻿@{
+    string theme = ViewData["theme"] as string ?? "primary";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Identity App</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/site.css" rel="stylesheet"/>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-@theme p-2">
+        <a class="navbar-brand text-white">IdentityApp</a>
+        <div class="text-white"><partial name="_LoginPartial" /></div>        
+    </nav>
+    <div>
+        <partial name="_NavigationPartial"/>
+        @RenderBody()
+    </div>
+</body>
+</html>

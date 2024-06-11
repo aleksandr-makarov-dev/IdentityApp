@@ -1,0 +1,31 @@
+﻿@page "{returnUrl?}"
+@model IdentityApp.Pages.Identity.SignInModel
+@{
+    ViewData["showNav"] = false;
+    ViewData["banner"] = "Sign In";
+}
+
+<div class="d-flex justify-content-center">
+    <div class="w-100" style="max-width: 33%;">
+        <div asp-validation-summary="All" class="text-danger m-2"></div>
+
+        @if (TempData.ContainsKey("message"))
+        {
+            <div class="alert alert-danger">@TempData["message"]</div>
+        }
+
+        <form method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" name="email"/>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" type="password" name="password"/>
+            </div>
+            <button type="submit" class="btn btn-primary">
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
