@@ -1,18 +1,21 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace IdentityApp.Pages.Identity
 {
+    [AllowAnonymous]
     public class SignInModel : UserPageModel
     {
         private readonly SignInManager<IdentityUser>  _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public SignInModel(SignInManager<IdentityUser> signInManager)
+        public SignInModel(SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
         [Required]
         [EmailAddress]
@@ -42,6 +45,13 @@ namespace IdentityApp.Pages.Identity
                     TempData["message"] = "Account is locked. Try again later";
                 }else if (signInResult.IsNotAllowed)
                 {
+                    IdentityUser? user = await _userManager.FindByEmailAsync(Email);
+
+                    if (user != null && !await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        return RedirectToPage("SignUpConfirm");
+                    }
+
                     TempData["message"] = "Account is not confirmed (Not allowed)";
                 }else if (signInResult.RequiresTwoFactor)
                 {
