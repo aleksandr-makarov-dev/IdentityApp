@@ -16,7 +16,7 @@ builder.Services.AddHttpsRedirection(opts => {
 
 builder.Services.AddDbContext<ApplicationDbContext>(opts => {
     opts.UseSqlite(
-        builder.Configuration.GetConnectionStringOrThrow("AppConnection")
+        builder.Configuration.GetConnectionStringOrThrow("SqliteConnection")
     );
 });
 
@@ -59,6 +59,10 @@ builder.Services.ConfigureApplicationCookie((options) =>
     options.AccessDeniedPath = "/Identity/Forbidden";
 });
 
+builder.Services.Configure<SecurityStampValidatorOptions>((options) =>
+{
+    options.ValidationInterval = TimeSpan.FromMinutes(1);
+});
 
 var app = builder.Build();
 

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IdentityApp.Data
 {
@@ -11,7 +12,14 @@ namespace IdentityApp.Data
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):base(options)
         {
-            
+            // AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder
+                .Properties<DateTimeOffset>()
+                .HaveConversion<DateTimeOffsetToBinaryConverter>();
         }
 
         protected override void OnModelCreating(ModelBuilder builder)

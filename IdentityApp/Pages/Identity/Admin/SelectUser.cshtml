@@ -27,7 +27,7 @@
         </tr>
     </thead>
     <tbody>
-        @if (Model.Users.Count() == 0) {
+        @if (!Model.Users.Any()) {
             <tr><td colspan="2">No matches</td></tr>
         } else {
             @foreach (IdentityUser user in Model.Users) {

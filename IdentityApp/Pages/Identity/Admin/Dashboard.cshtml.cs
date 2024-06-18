@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using IdentityApp.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityApp.Pages.Identity.Admin {
 
@@ -20,9 +21,16 @@ namespace IdentityApp.Pages.Identity.Admin {
             "alice@example.com", "bob@example.com", "charlie@example.com"
         };
 
-        public void OnGet() {
-            UsersCount = UserManager.Users.Count();
-            UsersUnconfirmed = UserManager.Users.Count(u => !u.EmailConfirmed);
+        public async Task OnGetAsync()
+        {
+
+            var utcNow = DateTimeOffset.UtcNow;
+
+            UsersCount = await UserManager.Users.CountAsync();
+            UsersUnconfirmed = await UserManager.Users.CountAsync(u => !u.EmailConfirmed);
+
+            UsersLockedout = await UserManager.Users
+                .CountAsync(u => u.LockoutEnabled && u.LockoutEnd > utcNow);
         }
 
         public async Task<IActionResult> OnPostAsync() {
