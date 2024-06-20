@@ -1,3 +1,4 @@
+using IdentityApp.Core.Configurations;
 using IdentityApp.Core.Extensions;
 using IdentityApp.Data;
 using IdentityApp.Services;
@@ -14,6 +15,10 @@ builder.Services.AddHttpsRedirection(opts => {
     opts.HttpsPort = 44350;
 });
 
+// Configure options
+
+builder.Services.ConfigureOptions<IdentityInitializeOptionsSetup>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(opts => {
     opts.UseSqlite(
         builder.Configuration.GetConnectionStringOrThrow("SqliteConnection")
@@ -25,7 +30,7 @@ builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>(opts =>
     {
-        opts.Password.RequiredLength = 8;
+        opts.Password.RequiredLength = 6;
         opts.Password.RequireDigit = false;
         opts.Password.RequireLowercase = false;
         opts.Password.RequireUppercase = false;
@@ -73,6 +78,9 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+// seed database
+app.SeedIdentityUsers();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

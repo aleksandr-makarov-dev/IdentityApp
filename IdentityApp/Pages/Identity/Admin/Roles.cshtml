@@ -1,0 +1,112 @@
+﻿@page "{id?}"
+@model IdentityApp.Pages.Identity.Admin.RolesModel
+@{
+    ViewBag.Workflow = "Roles";
+}
+
+<div asp-validation-summary="All" class="text-danger p-2"></div>
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th colspan="2" class="text-center">Master Role List</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (IdentityRole role in Model.RoleManager.Roles)
+        {
+            int userCount = (await Model.UserManager.GetUsersInRoleAsync(role.Name)).Count;
+
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    @if (userCount == 0)
+                    {
+                        <form method="post" asp-page-handler="deleteFromList">
+                            <input type="hidden" name="role" value="@role.Name"/>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    }
+                    else
+                    {
+                        @:@userCount users in role
+                    }
+                </td>
+            </tr>
+        }
+        <tr>
+            <td>
+                <form method="post" asp-page-handler="addToList" id="addToListForm">
+                    <input class="form-control" name="role"/>
+                </form>
+            </td>
+            <td>
+                <button type="submit" class="btn btn-success" form="addToListForm">
+                    Create
+                </button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<table class="table table-sm table-striped table-bordered">
+    <thead><tr><th colspan="2" class="text-center">User's Roles</th></tr></thead>
+    <tbody>
+        @if (!Model.RoleManager.Roles.Any())
+        {
+            <tr>
+                <td colspan="2" class="text-center py-2">
+                    User has no roles
+                </td>
+            </tr>
+        }
+        else
+        {
+            @foreach (string role in Model.CurrentRoles)
+            {
+                <tr>
+                    <td>@role</td>
+                    <td>
+                        <form method="post" asp-page-handler="removeUserFromRole">
+                            <input type="hidden" asp-for="Id"/>
+                            <input type="hidden" name="role" value="@role"/>
+                            <button type="submit" class="btn btn-danger" disabled="@(role == Model.SuperAdminRole)">
+                                Reject
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        @if (!Model.AvailableRoles.Any())
+        {
+            <tr>
+                <td colspan="2" class="text-center p-2">
+                    User is in all roles
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>
+                    <select class="form-control" name="role" form="addForm">
+                        <option selected disabled>Choose role</option>
+                        @foreach (string role in Model.AvailableRoles)
+                        {
+                            <option>@role</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <form method="post" asp-page-handler="addUserToRole" id="addForm">
+                        <input type="hidden" asp-for="Id"/>
+                        <button type="submit" class="btn btn-success">
+                            Assign
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
