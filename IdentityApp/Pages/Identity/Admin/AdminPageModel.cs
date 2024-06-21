@@ -2,7 +2,7 @@
 
 namespace IdentityApp.Pages.Identity.Admin {
 
-    [AllowAnonymous]
+    [Authorize(Roles = "SuperAdmin")]
     public class AdminPageModel : UserPageModel {
 
         // no methods or properties required

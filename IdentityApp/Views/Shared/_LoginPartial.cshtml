@@ -1,8 +1,24 @@
-﻿<nav class="nav">
+﻿@using IdentityApp.Core.Configurations
+@using Microsoft.Extensions.Options
+@inject  IOptions<IdentityInitializeOptions> Options
+@{
+    string superAdminRole = Options.Value.Role;
+}
+
+<nav class="nav">
     @if (User.Identity.IsAuthenticated) {
-        <a asp-page="/Identity/Index" class="nav-link bg-secondary text-white">
-            @User.Identity.Name
-        </a>
+        if (User.IsInRole(superAdminRole))
+        {
+            <a asp-page="/Identity/Admin/Dashboard" class="nav-link bg-secondary text-white">
+                @User.Identity.Name
+            </a>
+        }
+        else
+        {
+            <a asp-page="/Identity/Index" class="nav-link bg-secondary text-white">
+                @User.Identity.Name
+            </a>
+        }
         <a asp-page="/Identity/SignOut" class="nav-link bg-secondary text-white">
             Sign Out
         </a>
