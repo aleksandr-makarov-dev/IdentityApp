@@ -1,7 +1,7 @@
 using IdentityApp.Core.Configurations;
+using IdentityApp.Core.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using IdentityApp.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -18,10 +18,10 @@ namespace IdentityApp.Pages.Identity.Admin {
 
         public UserManager<IdentityUser> UserManager { get; set; }
 
-        public int UsersCount { get; set; } = 0;
-        public int UsersUnconfirmed { get; set; } = 0;
-        public int UsersLockedout { get; set; } = 0;
-        public int UsersTwoFactor { get; set; } = 0;
+        public int UsersCount { get; set; }
+        public int UsersUnconfirmed { get; set; }
+        public int UsersLockedOut { get; set; }
+        public int UsersTwoFactor { get; set; }
 
         private readonly string[] emails = {
             "alice@example.com", "bob@example.com", "charlie@example.com"
@@ -35,8 +35,10 @@ namespace IdentityApp.Pages.Identity.Admin {
             UsersCount = await UserManager.Users.CountAsync();
             UsersUnconfirmed = await UserManager.Users.CountAsync(u => !u.EmailConfirmed);
 
-            UsersLockedout = await UserManager.Users
+            UsersLockedOut = await UserManager.Users
                 .CountAsync(u => u.LockoutEnabled && u.LockoutEnd > utcNow);
+
+            UsersTwoFactor = await UserManager.Users.CountAsync(u => u.TwoFactorEnabled);
         }
 
         public async Task<IActionResult> OnPostAsync() {
