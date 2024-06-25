@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddControllers();
 
 builder.Services.AddHttpsRedirection(opts => {
     opts.HttpsPort = 44350;
@@ -18,6 +19,9 @@ builder.Services.AddHttpsRedirection(opts => {
 // Configure options
 
 builder.Services.ConfigureOptions<IdentityInitializeOptionsSetup>();
+builder.Services.ConfigureOptions<GoogleOptionsSetup>();
+
+// Add DbContext
 
 builder.Services.AddDbContext<ApplicationDbContext>(opts => {
     opts.UseSqlite(
@@ -40,19 +44,12 @@ builder.Services
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-//builder.Services.AddAuthentication()
-//    .AddFacebook(opts => {
-//        opts.AppId = Configuration["Facebook:AppId"];
-//        opts.AppSecret = Configuration["Facebook:AppSecret"];
-//    })
-//    .AddGoogle(opts => {
-//        opts.ClientId = Configuration["Google:ClientId"];
-//        opts.ClientSecret = Configuration["Google:ClientSecret"];
-//    })
-//    .AddTwitter(opts => {
-//      opts.ConsumerKey = Configuration["Twitter:ApiKey"];
-//        opts.ConsumerSecret = Configuration["Twitter:ApiSecret"];
-//    });
+builder.Services.AddAuthentication()
+    .AddGoogle((options) =>
+    {
+        options.ClientId = builder.Configuration["Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+    });
 
 builder.Services.AddScoped<TokenUrlEncoderService>();
 builder.Services.AddScoped<IdentityEmailService>();
@@ -90,5 +87,6 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();
