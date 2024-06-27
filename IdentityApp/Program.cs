@@ -4,6 +4,7 @@ using IdentityApp.Data;
 using IdentityApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,10 +12,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
+builder.Services.AddCors();
 
-builder.Services.AddHttpsRedirection(opts => {
-    opts.HttpsPort = 44350;
-});
+//builder.Services.AddHttpsRedirection(opts => {
+//    opts.HttpsPort = 44350;
+//});
 
 // Configure options
 
@@ -49,6 +52,12 @@ builder.Services.AddAuthentication()
     {
         options.ClientId = builder.Configuration["Google:ClientId"];
         options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+    })
+    .AddGitHub((options) =>
+    {
+        options.ClientId = builder.Configuration["Github:ClientId"];
+        options.ClientSecret = builder.Configuration["Github:ClientSecret"];
+        options.Scope.Add("user:email");
     });
 
 builder.Services.AddScoped<TokenUrlEncoderService>();
@@ -59,11 +68,22 @@ builder.Services.ConfigureApplicationCookie((options) =>
     options.LoginPath = "/Identity/SignIn";
     options.LogoutPath = "/Identity/SignOut";
     options.AccessDeniedPath = "/Identity/Forbidden";
+
+    options.Events.DisableRedirectionForApiClients();
 });
 
 builder.Services.Configure<SecurityStampValidatorOptions>((options) =>
 {
     options.ValidationInterval = TimeSpan.FromMinutes(1);
+});
+
+builder.Services.AddCors(opts => {
+    opts.AddDefaultPolicy(builder => {
+        builder.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 });
 
 var app = builder.Build();
@@ -79,14 +99,21 @@ if (!app.Environment.IsDevelopment())
 // seed database
 app.SeedIdentityUsers();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapRazorPages();
 app.MapControllers();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.Run();

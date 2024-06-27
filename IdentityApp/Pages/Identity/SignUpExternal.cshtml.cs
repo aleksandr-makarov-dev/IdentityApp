@@ -79,14 +79,10 @@ namespace IdentityApp.Pages.Identity
 
         public async Task<IActionResult> OnGetAsync(string id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return RedirectToPage("SignUp");
-            }
-
-            IdentityUser = await _userManager.FindByIdAsync(id);
-
-            if (IdentityUser is null)
+            if ((string.IsNullOrEmpty(id) || 
+                (IdentityUser = await _userManager.FindByIdAsync(id)) is null) &&
+                !TempData.ContainsKey("errorMessage")
+                )
             {
                 return RedirectToPage("SignUp");
             }

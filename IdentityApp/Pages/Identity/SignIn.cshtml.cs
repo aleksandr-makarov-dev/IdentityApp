@@ -1,4 +1,6 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,15 @@ namespace IdentityApp.Pages.Identity
             _signInManager = signInManager;
             _userManager = userManager;
         }
+
+        public IEnumerable<AuthenticationScheme> ExternalSchemes { get; private set; }
+
+        public async Task OnGetAsync()
+        {
+            ExternalSchemes = await _signInManager.GetExternalAuthenticationSchemesAsync();
+        }
+
+
         [Required]
         [EmailAddress]
         [BindProperty]
@@ -64,6 +75,39 @@ namespace IdentityApp.Pages.Identity
             }
 
             return Page();
+        }
+
+        public IActionResult OnPostExternalAsync(string provider)
+        {
+            string callbackUrl = Url.Page("SignIn", "Callback", new { ReturnUrl });
+            AuthenticationProperties props =
+                _signInManager.ConfigureExternalAuthenticationProperties(
+                    provider, callbackUrl);
+            return new ChallengeResult(provider, props);
+        }
+
+        public async Task<IActionResult> OnGetCallbackAsync()
+        {
+            ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+            SignInResult result = await _signInManager.ExternalLoginSignInAsync(
+                info.LoginProvider, info.ProviderKey, true);
+            if (result.Succeeded)
+            {
+                return Redirect(WebUtility.UrlDecode(ReturnUrl ?? "/"));
+            }
+            else if (result.IsLockedOut)
+            {
+                TempData["message"] = "Account Locked";
+            }
+            else if (result.IsNotAllowed)
+            {
+                TempData["message"] = "Sign In Not Allowed";
+            }
+            else
+            {
+                TempData["message"] = "Sign In Failed";
+            }
+            return RedirectToPage();
         }
     }
 }
