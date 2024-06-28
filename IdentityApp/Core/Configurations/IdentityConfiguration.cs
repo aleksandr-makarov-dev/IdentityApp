@@ -11,7 +11,7 @@ namespace IdentityApp.Core.Configurations
 
     public class IdentityInitializeOptionsSetup : IConfigureOptions<IdentityInitializeOptions>
     {
-        private const string SectionName = "Identity";
+        public const string SectionName = "Identity";
         private readonly IConfiguration _configuration;
 
         public IdentityInitializeOptionsSetup(IConfiguration configuration)

@@ -1,13 +1,17 @@
+using System.Text;
 using IdentityApp.Core.Configurations;
 using IdentityApp.Core.Extensions;
 using IdentityApp.Data;
 using IdentityApp.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+
+IConfiguration configuration = builder.Configuration;
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -22,7 +26,9 @@ builder.Services.AddCors();
 // Configure options
 
 builder.Services.ConfigureOptions<IdentityInitializeOptionsSetup>();
-builder.Services.ConfigureOptions<GoogleOptionsSetup>();
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<AppOptionsSetup>();
+builder.Services.ConfigureOptions<RefreshOptionsSetup>();
 
 // Add DbContext
 
@@ -33,6 +39,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(opts => {
 });
 
 builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
+builder.Services.AddScoped<JwtService>();
 
 builder.Services
     .AddIdentity<IdentityUser, IdentityRole>(opts =>
@@ -50,14 +57,37 @@ builder.Services
 builder.Services.AddAuthentication()
     .AddGoogle((options) =>
     {
-        options.ClientId = builder.Configuration["Google:ClientId"];
-        options.ClientSecret = builder.Configuration["Google:ClientSecret"];
+        GoogleOptions googleOptions = configuration
+            .GetSection(GoogleOptionsSetup.SectionName)
+            .GetOrThrow<GoogleOptions>();
+
+        options.ClientId = googleOptions.ClientId;
+        options.ClientSecret = googleOptions.ClientSecret;
     })
     .AddGitHub((options) =>
     {
-        options.ClientId = builder.Configuration["Github:ClientId"];
-        options.ClientSecret = builder.Configuration["Github:ClientSecret"];
-        options.Scope.Add("user:email");
+        GithubOptions githubOptions = configuration
+            .GetSection(GithubOptionsSetup.SectionName)
+            .GetOrThrow<GithubOptions>();
+
+        options.ClientId = githubOptions.ClientId;
+        options.ClientSecret = githubOptions.ClientSecret;
+
+        foreach (var scope in githubOptions.Scopes)
+        {
+            options.Scope.Add(scope);
+        }
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, (options) =>
+    {
+        JwtOptions jwtOptions = configuration
+            .GetSection(JwtOptionsSetup.SectionName)
+            .GetOrThrow<JwtOptions>();
+
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.ValidateIssuer = false;
+        options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.KeySecret));
+        options.TokenValidationParameters.ClockSkew = TimeSpan.Zero;
     });
 
 builder.Services.AddScoped<TokenUrlEncoderService>();

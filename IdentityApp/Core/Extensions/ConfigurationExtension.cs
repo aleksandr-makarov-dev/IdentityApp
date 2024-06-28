@@ -7,5 +7,10 @@
             return configuration.GetConnectionString(name) ??
                    throw new ArgumentNullException($"Connection string {name} is null");
         }
+
+        public static T GetOrThrow<T>(this IConfigurationSection section)
+        {
+            return section.Get<T>() ?? throw new ArgumentNullException(nameof(T));
+        }
     }
 }
