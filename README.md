@@ -56,5 +56,20 @@ Identity app is a implementation of different authentication and authorization t
 }
 ```
 ## Screenshots
+
+### Razor pages
+
 ![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/2e1fb329-7897-42c2-ba30-cd77bd1fbee5)
+
+![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/a063c982-066e-4062-815b-0251503fba63)
+
+![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/ca4f0159-567a-4b98-88b2-158b8a669359)
+
+### React
+
+![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/2848a254-5685-4e64-b577-21fae76ffd3d)
+
+![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/0575323c-662a-4326-989c-2789d58dd300)
+
+![image](https://github.com/aleksandrmakarov-dev/IdentityApp/assets/128474912/d23e95d8-33a7-4e79-a3d5-6379473a6b13)
 
