@@ -1,6 +1,6 @@
 # AspNetCore Identity Application
 
-Identity app is a implementation of different authentication and authorization tasks with AspNetCore Identity, EntityFramework, Razor Pages, API Controllers and React. The project is based on Adam Freeman's book [Pro ASP.NET CoreIdentityUnder the Hood with Authenticationand Authorization in ASP.NET Core Applications](https://www.amazon.com/ASP-NET-Core-Identity-Authentication-Authorization/dp/1484268571) and my own implementation of JWT + Refresh Token and React application. Completed 
+Identity app is a implementation of different authentication and authorization tasks with AspNetCore Identity, EntityFramework, Razor Pages, API Controllers and React. The project is based on Adam Freeman's book [Pro ASP.NET CoreIdentityUnder the Hood with Authenticationand Authorization in ASP.NET Core Applications](https://www.amazon.com/ASP-NET-Core-Identity-Authentication-Authorization/dp/1484268571) and my own implementation of JWT + Refresh Token and React application.
 
 ## Done
 - [x] Password authentication
