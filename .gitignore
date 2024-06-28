@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /IdentityApp/local.db
+/IdentityApp/appsettings.json
