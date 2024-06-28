@@ -20,7 +20,8 @@ namespace IdentityApp.Pages.Identity
             _userManager = userManager;
         }
 
-        public IEnumerable<AuthenticationScheme> ExternalSchemes { get; private set; }
+        public IEnumerable<AuthenticationScheme> ExternalSchemes { get; private set; } =
+            new List<AuthenticationScheme>();
 
         public async Task OnGetAsync()
         {
@@ -42,6 +43,8 @@ namespace IdentityApp.Pages.Identity
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ExternalSchemes = await _signInManager.GetExternalAuthenticationSchemesAsync();
+
             if (ModelState.IsValid)
             {
                 SignInResult signInResult = await _signInManager.PasswordSignInAsync(Email, Password, true, true);

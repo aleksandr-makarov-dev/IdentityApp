@@ -79,10 +79,9 @@ const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const tryRefreshToken = () => {
-    console.log("Refreshing token...");
     refreshToken(null, {
       onSuccess: ({ token }) => {
-        setToken(token);
+        signIn(token);
       },
       onError: () => {
         signOut();
