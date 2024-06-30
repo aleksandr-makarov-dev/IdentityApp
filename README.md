@@ -11,11 +11,11 @@ Identity app is a implementation of different authentication and authorization t
 - [x] Role based authorization
 - [x] Cookie based authentication
 - [x] JsonWebToken + Refresh Token in Cookie authentication + React app
+- [x] Magic links
       
 ## Goals
 - [ ] Keyclock authentication provider
 - [ ] Role based authentication in React app, role Guards
-- [ ] Magic links
 - [ ] Two factor authentication (Email, SMS)
 - [ ] and more...
 
