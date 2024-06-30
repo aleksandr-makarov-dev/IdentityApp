@@ -59,5 +59,18 @@ namespace IdentityApp.Services
                 $"Please set up your account by <a href=\"{url}\">clicking here</a>."
                 );
         }
+
+        public async Task SendMagicLinkEmailAsync(IdentityUser user, string confirmationPage)
+        {
+            string token = await _userManager.GenerateUserTokenAsync(user, "Default", "passwordless-auth");
+
+            string url = GetUrl(user.Email, token, confirmationPage);
+
+            await _emailSender.SendEmailAsync(
+                user.Email,
+                "Sign in to account",
+                $"Click the link to sing in to your account <a href=\"{url}\">clicking here</a>."
+            );
+        }
     }
 }

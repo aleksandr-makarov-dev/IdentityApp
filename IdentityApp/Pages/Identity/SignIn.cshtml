@@ -33,13 +33,22 @@
             </form>
 
         </div>
-        <div class="col-auto text-center">
-            <h6>Sign In with a Social Media Account</h6>
-            <form method="post" asp-page="SignIn" asp-page-handler="External">
-                @foreach (var scheme in Model.ExternalSchemes) {
-                    <partial name="_ExternalButtonPartial" model="scheme" />
-                }
-            </form>
+        <div class="col-auto">
+            <div class="row mb-3">
+                <h6>Sign In with a Social Media Account</h6>
+                <form method="post" asp-page="SignIn" asp-page-handler="External">
+                    @foreach (var scheme in Model.ExternalSchemes) {
+                        <partial name="_ExternalButtonPartial" model="scheme" />
+                    }
+                </form>
+            </div>
+            <div class="row">
+                <h6>Other Sign In methods</h6>
+                <div>
+                    <a asp-page="SignInMagicLink" class="btn btn-primary">Email link</a>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

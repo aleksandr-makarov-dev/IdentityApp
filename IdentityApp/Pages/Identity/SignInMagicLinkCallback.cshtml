@@ -1,0 +1,22 @@
+﻿@page "{email?}/{token?}"
+@model IdentityApp.Pages.Identity.SignInMagicLinkCallbackModel
+@{
+    ViewData["showNav"] = false;
+    ViewData["banner"] = "Sign in with Email";
+}
+
+@if (string.IsNullOrEmpty(Model.Token) || string.IsNullOrEmpty(Model.Email)) {
+    <div class="h6 text-center">
+        <div class="p-2">
+            Check your inbox for a sign in email and click the link it contains.
+        </div>
+        <a asp-page="SignInMagicLink" class="btn btn-primary">Resend Email</a>
+    </div>
+} else {
+
+    @if (TempData.ContainsKey("message"))
+    {
+        <div class="alert alert-danger">@TempData["message"]</div>
+    }
+    <div asp-validation-summary="All" class="text-danger m-2"></div>
+}
